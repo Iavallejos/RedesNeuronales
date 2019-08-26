@@ -47,13 +47,13 @@ def prepare_data(data):
 
     ndata = []
     for i in range(len(sepal_length)):
-        ndata.append(((
+        ndata.append([np.array([
             sepal_length[i],
             sepal_width[i],
             petal_length[i],
-            petal_width[i],),
-            real_class[i]
-        ))
+            petal_width[i]]),
+            np.array(real_class[i])
+        ])
 
     return ndata
 
