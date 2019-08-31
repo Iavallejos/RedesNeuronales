@@ -16,12 +16,18 @@ def getData(properties):
         with open(data) as reader:
             for line in reader:
                 ldata = line.strip().split(',')
+                data_class=[]
+                for i in range(properties["number_of_classes"]):
+                    if i==classes[ldata[4]]:
+                        data_class.append(1)
+                    else:
+                        data_class.append(0)
 
                 parsed_data[0].append(float(ldata[0]))  # sepal_length
                 parsed_data[1].append(float(ldata[1]))  # sepal_width
                 parsed_data[2].append(float(ldata[2]))  # petal_length
                 parsed_data[3].append(float(ldata[3]))  # petal_width
-                parsed_data[4].append(classes[ldata[4]])  # class
+                parsed_data[4].append(data_class)       # one hot encoded class
     except:
         pass
     return parsed_data
