@@ -46,10 +46,6 @@ class Perceptron:
 
         return 0
 
-    '''muchos inputs con sus desired outputs
-        inputs son muchos inputs distintos es una lista de listas
-        desired output es una lista del mismo largo que inputs con los resultados esperados de estos
-    '''
     def learn(self, inputs, desiredOutput, lr=0.1):
         if not isinstance(inputs, list):
             raise ValueError("Invalid inputs type")

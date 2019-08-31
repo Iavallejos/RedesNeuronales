@@ -1,5 +1,5 @@
 import numpy as np
-from activation_functions import *
+from .activation_functions import ActivationFunction
 
 
 class Perceptron:
@@ -11,13 +11,23 @@ class Perceptron:
         self.bias = 0.0
         self.weights = np.random.randn(1, weights)[0]
         self.activation_function = activation_function
+        self.total = None
+        self.delta = None
+
+    def calcDelta(self, delta):
+        if not (isinstance(delta, float) or isinstance(delta, int)):
+            raise TypeError("Invalid type, not a number")
+        self.delta = delta * self.activation_function.derivative(self.total)
+    
+    def getDelta(self):
+        return self.delta
 
     def getWeights(self):
         return self.weights
 
     def setWeights(self, weights):
         if not isinstance(weights, np.ndarray):
-            raise TypeError("Invalid type, not a numpy.ndarray")
+            raise TypeError("Invalid type, not a {}".format(np.ndarray))
         self.weights = weights
 
     def getBias(self):
@@ -30,13 +40,41 @@ class Perceptron:
 
     def feed(self, inputs):
         if not isinstance(inputs, np.ndarray):
-            raise TypeError("Invalid type, not a numpy.ndarray")
+            raise TypeError("Invalid type, not a {}".format(np.ndarray))
         if len(inputs) != len(self.weights):
             raise ValueError(
                 "Number of inputs is different than the number of the weights of the perceptron")
         total = np.dot(self.weights, inputs) + self.bias
 
-        return self.activation_function.apply(total)
+        self.total = total
+
+        return self.activation_function.apply(self.total)
 
     def train(self, inputs, expected):
         pass  # TODO
+
+ 
+    def calcNewValues(self, inputs, lr):
+        """Calculates the new weights and bias using the stored delta,
+        the inputs received and the given learning rate
+        """        
+        if not isinstance(inputs, np.ndarray):
+            raise TypeError("Invalid type, not a {}".format(np.ndarray))
+        if len(inputs) != len(self.weights):
+            raise ValueError(
+                "Number of inputs is different than the number of the weights of the perceptron")
+        if not (isinstance(lr, int) or isinstance(lr, float)):
+            raise TypeError("Learning rate invalid, not a number")
+        if not lr > 0:
+            raise ValueError("Learning rate invalid, has to be greater than zero")
+        if self.delta is None:
+            raise ValueError("Delta is None")
+
+        nWeights = self.weights.copy()
+        nbias = self.bias
+        for i in range(len(self.weights)):
+            nWeights[i] -= lr * self.delta * inputs[i]
+        nbias -= lr * self.delta
+
+        self.weights = nWeights.copy()
+        self.bias = nbias
