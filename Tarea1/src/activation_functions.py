@@ -10,14 +10,10 @@ class ActivationFunction:
 
 
 class Step(ActivationFunction):
-    def __init__(self, umbral):
-        self.umbral = umbral
-
     def apply(self, x):
-        if x < self.umbral:
+        if x < 0:
             return 0
-        else:
-            return 1
+        return 1
 
     def derivative(self, x):
         if x == 0:
