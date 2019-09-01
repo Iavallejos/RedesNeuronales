@@ -1,17 +1,15 @@
 # Tarea 1
 ## Tabla de contenidos
 
-- [Tarea 1](#tarea-1)
-  - [Tabla de contenidos](#tabla-de-contenidos)
-  - [Requisitos](#requisitos)
-  - [Instrucciones](#instrucciones)
-  - [Apreciaciones](#apreciaciones)
-  - [Resultados](#resultados)
-    - [Iteración 1](#iteraci%c3%b3n-1)
-    - [Iteración 2](#iteraci%c3%b3n-2)
-    - [Iteración 3](#iteraci%c3%b3n-3)
-    - [Iteración 4](#iteraci%c3%b3n-4)
-    - [Iteración 5](#iteraci%c3%b3n-5)
+- [Requisitos](#requisitos)
+- [Instrucciones](#instrucciones)
+- [Apreciaciones](#apreciaciones)
+- [Resultados](#resultados)
+  - [Iteración 1](#iteraci%c3%b3n-1)
+  - [Iteración 2](#iteraci%c3%b3n-2)
+  - [Iteración 3](#iteraci%c3%b3n-3)
+  - [Iteración 4](#iteraci%c3%b3n-4)
+  - [Iteración 5](#iteraci%c3%b3n-5)
 
 ## Requisitos
 La tarea consiste en implementar una red neuronal desde 0, debe contener:
