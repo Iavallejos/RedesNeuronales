@@ -68,9 +68,9 @@ def normalize(properties):
     print("Getting data")
     data = getData(properties)
     print("Data obtained")
-    print("Normalizing Data")
+    print("Normalizing data")
     ndata = np.array(prepare_data(data))
-    print("normalized data")
+    print("Data normalized")
 
     data_path = Path.cwd() / properties["data"]
     np.save(data_path, ndata)

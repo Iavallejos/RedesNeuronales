@@ -1,7 +1,7 @@
 import numpy as np
 from .activation_functions import ActivationFunction
 from .perceptron import Perceptron
-from .utils import calculate_cost
+from .utils import calc_with_threshold
 
 
 class NeuralNetwork():
@@ -60,6 +60,7 @@ class NeuralNetwork():
         self.layers = layers
         self.epoch = properties["epoch"]
         self.learning_rate = properties["learning_rate"]
+        self.threshold = properties["threshold"]
         self.input_length = input_length
         self.hidden_layers = hidden_layers
 
@@ -69,7 +70,7 @@ class NeuralNetwork():
     def get_layers(self):
         return self.layers
 
-    def feed(self, inputs):
+    def feed(self, inputs, use_threshold=True):
         if inputs.dtype.type is not np.float64:
             raise TypeError("Invalid input type, not {}".format(np.float64))
         if len(inputs) != self.input_length:
@@ -89,11 +90,15 @@ class NeuralNetwork():
                     layer_results.append(neuron.feed(results[layer_number-1]))
             
             results.append(np.array(layer_results))
-        
+        if use_threshold:
+            classes = results[-1]
+            for i in range(len(classes)):
+                classes[i] = calc_with_threshold(classes[i], self.threshold)
+            results[-1] = classes
         return np.array(results)
     
     def train(self, inputs, expected):
-        results = self.feed(inputs)
+        results = self.feed(inputs, use_threshold=False)
         predicted = results[-1]
         
         # Calculating deltas for each neuron
