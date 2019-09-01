@@ -4,6 +4,11 @@ import json
 
 
 def getData(properties):
+    """
+    Given the paths in properties, load the dataset and proces it
+    to return an array with parsed data, also applies 1-hot codding
+    codification for the class
+    """
     data = Path.cwd() / properties["dataset"]
     mapping = Path.cwd() / properties["classes"]
     print('loading file {}'.format(mapping))
@@ -34,6 +39,9 @@ def getData(properties):
 
 
 def normalize_data(data, min_num, max_num):
+    """
+    Normalices the given data using the given parameters
+    """
     ndata = np.array(data)
     nmin = ndata.min()
     nmax = ndata.max()
@@ -45,6 +53,9 @@ def normalize_data(data, min_num, max_num):
 
 
 def prepare_data(data):
+    """
+    It takes the data, normalices it nad returns it
+    """
     sepal_length = normalize_data(data[0], 0, 1)
     sepal_width = normalize_data(data[1], 0, 1)
     petal_length = normalize_data(data[2], 0, 1)
@@ -65,6 +76,10 @@ def prepare_data(data):
 
 
 def normalize(properties):
+    """
+    Given the paths in properties, prepares the dataset and
+    saves it in a npy file
+    """
     print("Getting data")
     data = getData(properties)
     print("Data obtained")

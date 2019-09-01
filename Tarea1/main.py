@@ -1,7 +1,7 @@
 from src.normalization import normalize
 from src.activation_functions import *
 from src.neural_network import NeuralNetwork
-from src.utils import get_class, calculate_cost, plot_confusion_matrix
+from src.utils import calculate_cost, plot_confusion_matrix, calculate_proms
 from sklearn.metrics import precision_score, recall_score, f1_score
 from sklearn.model_selection import KFold
 import numpy as np
@@ -14,17 +14,19 @@ properties = {
     'number_of_classes': 3,
     'epoch': 1000,
     'learning_rate': 0.1,
-    'threshold': 0.9,
     'data': 'Data/Iris/data.npy',
     'dataset': 'Data/Iris/iris.data',
     'classes': 'Data/Iris/mapping.json'
 }
 
 
-def run_network(properties, train_data, test_data):
-    # recall_score(y_true, y_pred, average=None)
-    # precision_score(y_true, y_pred, average=None)
-    # f1_score(y_true, y_pred, average=None)
+def run_network(properties, train_data, test_data, iteration=None):
+    """
+    Creates and runs a neural network using the data in properties,
+    creates a confusion matrix and returns a dictionary with the metrics
+    of the neural network and the las pair of predicted and expected
+    classes
+    """
     neural_network = NeuralNetwork(properties, Sigmoid())
 
     precision = []
@@ -34,13 +36,11 @@ def run_network(properties, train_data, test_data):
     epoch = []
 
     expected, predictions = predict(neural_network, test_data)
-    print("Expected:\n{}".format(expected))
-    print("Predictions:\n{}\n\n\n".format(predictions))
 
-    
-    precision.append(precision_score(expected, predictions, average=None))
-    recall.append(recall_score(expected, predictions, average=None))
-    f1.append(f1_score(expected, predictions, average=None))
+    precision.append(precision_score(
+        expected, predictions, average='weighted'))
+    recall.append(recall_score(expected, predictions, average='weighted'))
+    f1.append(f1_score(expected, predictions, average='weighted'))
     cost.append(calculate_cost(expected, predictions))
     epoch.append(0)
 
@@ -49,13 +49,16 @@ def run_network(properties, train_data, test_data):
             print("Epoch {:4}:".format(i))
             expected, predictions = predict(neural_network, test_data)
             epoch_precision = precision_score(
-                expected, predictions, average=None)
-            epoch_recall = recall_score(expected, predictions, average=None)
-            epoch_f1 = f1_score(expected, predictions, average=None)
+                expected, predictions, average='weighted')
+            epoch_recall = recall_score(
+                expected, predictions, average='weighted')
+            epoch_f1 = f1_score(expected, predictions, average='weighted')
             epoch_cost = calculate_cost(expected, predictions)
 
-            print("\tPrecision: {}".format(epoch_precision))
-            print("\tCost: {:.4}".format(epoch_cost))
+            print("{:>14} {:.4}".format('Precision:', epoch_precision))
+            print("{:>14} {:.4}".format('Recall:', epoch_recall))
+            print("{:>14} {:.4}".format('F1:', epoch_cost))
+            print("{:>14} {:.4}".format('Cost:', epoch_cost))
 
             precision.append(epoch_precision)
             recall.append(epoch_recall)
@@ -65,23 +68,40 @@ def run_network(properties, train_data, test_data):
 
         train(neural_network, train_data)
     print("Finished")
-    print("Getting confusion matrix")
-    classes=np.array(["setosa", "versicolor", "virginica"])
-    print("expected len: {}".format(len(expected)))
-    print("predictions len: {}".format(len(predictions)))
-    print("expected:\n{}".format(get_class(expected)))
-    print("predictions:\n{}".format(get_class(predictions)))
-    plot_confusion_matrix(get_class(expected), get_class(predictions), classes)
+    print("Calculating confusion matrix")
+    classes = np.array(["setosa", "versicolor", "virginica"])
+    if iteration is not None:
+        title = "Confusion Matrix for iteration {}".format(iteration)
+    else:
+        title = None
+    plot_confusion_matrix(expected, predictions, classes, title=title)
 
-    plt.show()
+    metrics = {
+        "iteration:": iteration,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1,
+        "cost": cost,
+        "last_expected": expected,
+        "last_predicted": predictions
+    }
+
+    return metrics
+
 
 def predict(neural_network, test_data):
+    """
+    Uses the given neural network to predict
+    a class for every data in test_data, returns
+    a tuple with 2 arrays, the expected classes and
+    the predicted classes
+    """
     predictions = []
     expected = []
     for data in test_data:
         predicted = neural_network.feed(data[0])
-        predictions.append(predicted[-1])
-        expected.append(data[1])
+        predictions.append(predicted)
+        expected.append(np.argmax(data[1]))
 
     predictions = np.array(predictions)
     expected = np.array(expected)
@@ -89,6 +109,10 @@ def predict(neural_network, test_data):
 
 
 def train(neural_network, train_data):
+    """
+    Trains the given neural network using all
+    the data in train_data
+    """
     for data in train_data:
         neural_network.train(data[0], data[1])
 
@@ -99,24 +123,24 @@ if __name__ == "__main__":
     data = np.load(properties["data"], allow_pickle=True)
 
     kf = KFold(n_splits=5, shuffle=True)
+    cont = 1
+    print("{:-^40}".format('Iniciando simulación'))
+    print("Serán {} iteraciones".format(kf.get_n_splits()))
+    metrics = []
     for train_index, test_index in kf.split(data):
+        print("{:-^40}".format('Iniciando iteración {}'.format(cont)))
         train_data, test_data = data[train_index], data[test_index]
-        run_network(properties, train_data, test_data)
+        it_metrics = run_network(
+            properties, train_data, test_data, iteration=cont)
+        metrics.append(it_metrics)
+        cont += 1
+        print("{:-^40}".format('Iteración terminada'))
+    print("{:-^40}".format('Simulación terminada'))
+    proms = calculate_proms(metrics)
+    print("Métricas finales promediadas:")
+    print("{:>14} {:.4}".format('Precision:', proms["precision"]))
+    print("{:>14} {:.4}".format('Recall:', proms["recall"]))
+    print("{:>14} {:.4}".format('F1:', proms["f1"]))
+    print("{:-^40}".format('Mostrando matrices de confusión'))
 
-    '''
-    #classes = np.array(["setosa", "versicolor", "virginica"])
-    train_data = data[0]
-    test_data = data[0]
-
-    print("class: {} -  input data: {}".format(test_data[1], test_data[0]))
-    neural_network = NeuralNetwork(properties, Sigmoid())
-
-    prediction = neural_network.feed(test_data[0])
-    print("prediction {:4}: {}".format(0, prediction[-1]))
-    
-    for i in range(1, properties["epoch"]+1):
-        neural_network.train(train_data[0], train_data[1])
-        if i % 50 == 0:
-            prediction = neural_network.feed(test_data[0])
-            print("prediction {0:4}: {1}".format(i, prediction[-1]))
-    '''
+    plt.show()

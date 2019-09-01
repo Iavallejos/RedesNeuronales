@@ -1,10 +1,11 @@
 import numpy as np
 from .activation_functions import ActivationFunction
 from .perceptron import Perceptron
-from .utils import calc_with_threshold
 
 
 class NeuralNetwork():
+    """Provides a neural network"""
+
     def __init__(self, properties, activation_function):
         """ Creates a new NeuralNetwork
         it uses a properties dictionary (in main.py)
@@ -54,13 +55,13 @@ class NeuralNetwork():
 
         final_layer = []
         for _ in range(number_of_classes):
-            final_layer.append(Perceptron(neurons_per_layer, activation_function))
+            final_layer.append(Perceptron(
+                neurons_per_layer, activation_function))
 
         layers.append(final_layer)
         self.layers = layers
         self.epoch = properties["epoch"]
         self.learning_rate = properties["learning_rate"]
-        self.threshold = properties["threshold"]
         self.input_length = input_length
         self.hidden_layers = hidden_layers
 
@@ -70,46 +71,53 @@ class NeuralNetwork():
     def get_layers(self):
         return self.layers
 
-    def feed(self, inputs, use_threshold=True):
+    def feed(self, inputs, predict_proba=False):
+        """
+        Predicts a class based in the inputs, if predict_proba is set to
+        True, it returns the outputs of all the layers
+        """
         if inputs.dtype.type is not np.float64:
             raise TypeError("Invalid input type, not {}".format(np.float64))
         if len(inputs) != self.input_length:
             raise ValueError(
                 "Number of inputs is different than the defined number: {}".format(self.input_length))
-                
+
         results = []
 
         # iterate over the hidden layers and the final layer
         for layer_number in range(self.hidden_layers+1):
             layer_results = []
-            if layer_number == 0: # first layer
+            if layer_number == 0:  # first layer
                 for neuron in self.layers[layer_number]:
                     layer_results.append(neuron.feed(inputs))
-            else: # the other hidden layers and/or last layer
+            else:  # the other hidden layers and/or last layer
                 for neuron in self.layers[layer_number]:
                     layer_results.append(neuron.feed(results[layer_number-1]))
-            
+
             results.append(np.array(layer_results))
-        if use_threshold:
-            classes = results[-1]
-            for i in range(len(classes)):
-                classes[i] = calc_with_threshold(classes[i], self.threshold)
-            results[-1] = classes
+
+        if not predict_proba:
+            return np.array(np.argmax(results[-1]))
+
         return np.array(results)
-    
+
     def train(self, inputs, expected):
-        results = self.feed(inputs, use_threshold=False)
+        """
+        Trains the neural network using the input data and
+        the expected class, uses backpropagation
+        """
+        results = self.feed(inputs, predict_proba=True)
         predicted = results[-1]
-        
+
         # Calculating deltas for each neuron
         for i in reversed(range(self.hidden_layers+1)):
             layer = self.layers[i]
-            if i == self.hidden_layers: # final layer
+            if i == self.hidden_layers:  # final layer
                 for j in range(len(layer)):
                     neuron = layer[j]
                     neuron.calcDelta(predicted[j] - expected[j])
             else:
-                for j in range(len(layer)): # inner layers
+                for j in range(len(layer)):  # inner layers
                     neuron = layer[j]
                     total = 0
                     for nextLayerNeuron in self.layers[i+1]:
@@ -127,10 +135,3 @@ class NeuralNetwork():
                 layer_input = results[i-1]
             for neuron in self.layers[i]:
                 neuron.calcNewValues(layer_input, self.learning_rate)
-
-        
-
-                
-        
-        
-

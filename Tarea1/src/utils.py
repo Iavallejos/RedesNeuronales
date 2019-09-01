@@ -9,15 +9,23 @@ def calculate_cost(expected, results):
     return cost
 
 
-def calc_with_threshold(value, th):
-    if value < th:
-        return 0
-    return 1
+def calculate_proms(params):
+    precision = 0
+    recall = 0
+    f1 = 0
 
+    for iteration in params:
+        precision += iteration["precision"][-1]
+        recall += iteration["recall"][-1]
+        f1 += iteration["f1"][-1]
 
-def get_class(classes):
-    nclasses = np.where(classes==1)[1]
-    return nclasses
+    proms = {
+        "precision": precision/len(params),
+        "recall": recall/len(params),
+        "f1": f1/len(params)
+    }
+
+    return proms
 
 
 def plot_confusion_matrix(y_true, y_pred, classes,
@@ -39,9 +47,6 @@ def plot_confusion_matrix(y_true, y_pred, classes,
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
 
     print(cm)
 

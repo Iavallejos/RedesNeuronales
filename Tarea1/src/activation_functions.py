@@ -2,6 +2,8 @@ import numpy as np
 
 
 class ActivationFunction:
+    """Abstract class to represent activation functions"""
+
     def apply(self, x):
         pass
 
@@ -10,6 +12,8 @@ class ActivationFunction:
 
 
 class Step(ActivationFunction):
+    """The step funtion"""
+
     def apply(self, x):
         if x < 0:
             return 0
@@ -22,6 +26,8 @@ class Step(ActivationFunction):
 
 
 class Sigmoid(ActivationFunction):
+    """The sigmoid function"""
+
     def apply(self, x):
         return 1 / (1 + np.exp(-x))
 
@@ -30,6 +36,8 @@ class Sigmoid(ActivationFunction):
 
 
 class Tanh(ActivationFunction):
+    """The tanh function"""
+
     def apply(self, x):
         return np.tanh(x)
 
