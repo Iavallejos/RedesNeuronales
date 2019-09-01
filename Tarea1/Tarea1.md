@@ -117,7 +117,7 @@ properties = {
 
 ## Apreciaciones
 
-La principal dificultad para la realización de la tarea fue aplicar *backpropagation*, que si bien se aplica en pocas líneas de código, requiere entender plenamente lo que se está haciendo. Además se debe tener mucho cuidado al aplicarlo, ya que es difícil de *debugear*
+La principal dificultad para la realización de la tarea fue aplicar *backpropagation*, que si bien se aplica en pocas líneas de código, requiere entender plenamente lo que se está haciendo. Además se debe tener mucho cuidado al aplicarlo, ya que es difícil de *debugear*.
 
 Otra dificultad que hubo fue producto de la nula experiencia trabajando con *numpy*, a partir de ésto, se deben poder hacer bastantes optimizaciones.
 
