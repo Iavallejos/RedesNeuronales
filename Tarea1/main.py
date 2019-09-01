@@ -1,7 +1,7 @@
 from src.normalization import normalize
 from src.activation_functions import *
 from src.neural_network import NeuralNetwork
-from src.utils import calculate_cost, plot_confusion_matrix, calculate_proms
+from src.utils import calculate_cost, plot_iteraton, calculate_proms
 from sklearn.metrics import precision_score, recall_score, f1_score
 from sklearn.model_selection import KFold
 import numpy as np
@@ -12,15 +12,17 @@ properties = {
     'neurons_per_layer': 4,
     'input_length': 4,
     'number_of_classes': 3,
-    'epoch': 1000,
+    'epoch': 200,
     'learning_rate': 0.1,
+    'folds': 5,
+    'sampling_rate': 5,
     'data': 'Data/Iris/data.npy',
     'dataset': 'Data/Iris/iris.data',
     'classes': 'Data/Iris/mapping.json'
 }
 
 
-def run_network(properties, train_data, test_data, iteration=None):
+def run_network(properties, train_data, test_data, iteration):
     """
     Creates and runs a neural network using the data in properties,
     creates a confusion matrix and returns a dictionary with the metrics
@@ -45,7 +47,7 @@ def run_network(properties, train_data, test_data, iteration=None):
     epoch.append(0)
 
     for i in range(1, properties["epoch"]+1):
-        if i % 50 == 0:
+        if i % properties["sampling_rate"] == 0:
             print("Epoch {:4}:".format(i))
             expected, predictions = predict(neural_network, test_data)
             epoch_precision = precision_score(
@@ -70,11 +72,13 @@ def run_network(properties, train_data, test_data, iteration=None):
     print("Finished")
     print("Calculating confusion matrix")
     classes = np.array(["setosa", "versicolor", "virginica"])
-    if iteration is not None:
-        title = "Confusion Matrix for iteration {}".format(iteration)
-    else:
-        title = None
-    plot_confusion_matrix(expected, predictions, classes, title=title)
+
+    title = "Iteration {}".format(iteration)
+   
+    plot_iteraton(
+        title,
+        (precision, recall, f1, cost, epoch),
+        (expected, predictions, classes))
 
     metrics = {
         "iteration:": iteration,
@@ -122,25 +126,26 @@ if __name__ == "__main__":
     print("Loading data in: {}".format(properties["data"]))
     data = np.load(properties["data"], allow_pickle=True)
 
-    kf = KFold(n_splits=5, shuffle=True)
+    kf = KFold(n_splits=properties["folds"], shuffle=True)
     cont = 1
-    print("{:-^40}".format('Iniciando simulación'))
+    print("{:-^50}".format('Iniciando simulación'))
     print("Serán {} iteraciones".format(kf.get_n_splits()))
     metrics = []
     for train_index, test_index in kf.split(data):
-        print("{:-^40}".format('Iniciando iteración {}'.format(cont)))
+        print("{:-^50}".format('Iniciando iteración {}'.format(cont)))
         train_data, test_data = data[train_index], data[test_index]
         it_metrics = run_network(
-            properties, train_data, test_data, iteration=cont)
+            properties, train_data, test_data, cont)
         metrics.append(it_metrics)
         cont += 1
-        print("{:-^40}".format('Iteración terminada'))
-    print("{:-^40}".format('Simulación terminada'))
+        print("{:-^50}".format('Iteración terminada'))
+    print("{:-^50}".format('Simulación terminada'))
     proms = calculate_proms(metrics)
     print("Métricas finales promediadas:")
     print("{:>14} {:.4}".format('Precision:', proms["precision"]))
     print("{:>14} {:.4}".format('Recall:', proms["recall"]))
     print("{:>14} {:.4}".format('F1:', proms["f1"]))
-    print("{:-^40}".format('Mostrando matrices de confusión'))
+    print("{:>14} {:.4}".format('Cost:', proms["cost"]))
+    print("{:-^50}".format('Mostrando métricas de las iteraciones'))
 
     plt.show()
