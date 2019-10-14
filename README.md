@@ -7,3 +7,4 @@ En este repositorio se encontrará todo el trabajo realizado para el curso CC511
 
 1. [Perceptron (primeras clases)](Perceptron/Perceptron.md)
 2. [Tarea 1](Tarea1/Tarea1.md)
+3. [Tarea 2](Tarea2/Tarea2.md)

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class GeneticAlgotirhm:
+class GeneticAlgorithm:
     def __init__(
         self,
         pop_size,
@@ -53,7 +53,8 @@ class GeneticAlgotirhm:
         total_fitness = np.sum(self.__population_fitness)
         new_population = [self.__produce_offspring(total_fitness)
                           for _ in range(self.__pop_size)]
-        self.__population = new_population
+        self.__population = np.reshape(
+            new_population, (1, 2*len(new_population)))[0].tolist()
 
     def simulate(self):
         best_individual = []
