@@ -20,8 +20,9 @@ class GeneticAlgorithm:
         self.__termination_condition = termination_condition
         self.__max_iter = max_iter
 
-        self.__population = [self.__individual_factory()
-                             for _ in range(self.__pop_size)]
+        self.__population = [
+            self.__individual_factory() for _ in range(self.__pop_size)
+        ]
         self.__population_fitness = []
 
     def getPopulation(self):
@@ -33,8 +34,7 @@ class GeneticAlgorithm:
         ]
 
     def __produce_offspring(self, total_fitness):
-        parent_1_fitness, parent_2_fitness = np.random.randint(
-            1, total_fitness, 2)
+        parent_1_fitness, parent_2_fitness = np.random.randint(1, total_fitness, 2)
         total = 0
         parent_1 = None
         parent_2 = None
@@ -47,14 +47,22 @@ class GeneticAlgorithm:
             if not (parent_1 is None or parent_2 is None):
                 break
 
-        # TODO create the new individual
+        gen_breakpoint_index = np.random.randint(0, len(parent_1))
+
+        child_1 = parent_1[:gen_breakpoint_index] + parent_2[gen_breakpoint_index:]
+        child_2 = parent_2[:gen_breakpoint_index] + parent_1[gen_breakpoint_index:]
+
+        return (child_1, child_2)
 
     def __reproduce(self):
         total_fitness = np.sum(self.__population_fitness)
-        new_population = [self.__produce_offspring(total_fitness)
-                          for _ in range(self.__pop_size)]
-        self.__population = np.reshape(
-            new_population, (1, 2*len(new_population)))[0].tolist()
+        new_population = [
+            self.__produce_offspring(total_fitness)
+            for _ in range((int)(self.__pop_size / 2))
+        ]
+        self.__population = np.reshape(new_population, (1, 2 * len(new_population)))[
+            0
+        ].tolist()
 
     def simulate(self):
         best_individual = []
@@ -67,8 +75,7 @@ class GeneticAlgorithm:
             worst_individual.append(np.min(self.__population_fitness))
             generation_average.append(np.average(self.__population_fitness))
 
-            results = map(self.__termination_condition,
-                          self.__population_fitness)
+            results = map(self.__termination_condition, self.__population_fitness)
             if True in results:
                 break
 
