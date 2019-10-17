@@ -3,7 +3,6 @@ from Problems.FindWord import FindWord
 
 
 def main():
-
     '''
     problem = BitSequence(
         target_number=121,
@@ -14,12 +13,12 @@ def main():
     )
     '''
     problem = FindWord(
-        target_word='papel',
-        pop_size=500,
+        target_word='helloworld',
+        pop_size=1000,
         mutation_rate=0.1,
-        max_iter=50
+        max_iter=500
     )
-    
+
     population, data = problem.run()
 
 

@@ -23,7 +23,8 @@ class Problem:
         print(data["generation_average_data"])
         print("\nFinal best individual: ", end="")
 
-        for gen in data["final_best_individual"]:
+        final_best_individual = data["historic_best_individual"][-1]
+        for gen in final_best_individual:
             print(gen, end="")
         print("\n", end="")
 

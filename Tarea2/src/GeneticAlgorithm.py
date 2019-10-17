@@ -103,22 +103,32 @@ class GeneticAlgorithm:
         best_individual_data = []
         worst_individual_data = []
         generation_average_data = []
+        historic_best_individual = []
         print("{:-^50}".format("START"))
         for i in range(self.__max_iter + 1):
             self.__evaluate()
 
+            actual_best_individual_fitness = np.max(self.__population_fitness)
+            actual_worst_individual_fitness = np.min(self.__population_fitness)
+            actual_average_individual_fitness = np.average(self.__population_fitness)
+            actual_best_individual =  self.__population[np.argmax(self.__population_fitness)]
+            
             print("iteration {}:".format(i))
             print("\tBest Individual fitness:    {}".format(
-                np.max(self.__population_fitness)))
+                actual_best_individual_fitness))
             print("\tWorst Individual fitness:   {}".format(
-                np.min(self.__population_fitness)))
+                actual_worst_individual_fitness))
             print("\tAverage Individual fitness: {}".format(
-                np.average(self.__population_fitness)))
+                actual_average_individual_fitness))
+            print("\tActual Best Individual: ", end="")
+            for gen in actual_best_individual:
+                print(gen, end="")
+            print("\n", end="")
 
-            best_individual_data.append(np.max(self.__population_fitness))
-            worst_individual_data.append(np.min(self.__population_fitness))
-            generation_average_data.append(
-                np.average(self.__population_fitness))
+            best_individual_data.append(actual_best_individual_fitness)
+            worst_individual_data.append(actual_worst_individual_fitness)
+            generation_average_data.append(actual_average_individual_fitness)
+            historic_best_individual.append(actual_best_individual)
 
             results = map(self.__termination_condition,
                           self.__population_fitness)
@@ -132,5 +142,5 @@ class GeneticAlgorithm:
             "best_individual_data": best_individual_data,
             "worst_individual_data": worst_individual_data,
             "generation_average_data": generation_average_data,
-            "final_best_individual": self.__population[np.argmax(self.__population_fitness)]
+            "historic_best_individual": historic_best_individual
         }
