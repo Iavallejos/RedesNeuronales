@@ -39,9 +39,9 @@ class FindWord(Problem):
     def termination_condition(self, individual_fitness):
         return individual_fitness == len(self.target_word)
 
-    def mutate(self, gen):
+    def mutate(self, gene):
         new_gen = self.gen_factory()
-        while new_gen == gen:
+        while new_gen == gene:
             new_gen = self.gen_factory()
 
         return new_gen

@@ -1,5 +1,6 @@
 from Problems.BitSequence import BitSequence
 from Problems.FindWord import FindWord
+from Problems.Knapsack01 import Knapsack01
 
 
 def main():
@@ -12,13 +13,19 @@ def main():
         max_iter=10
     )
     '''
+    '''
     problem = FindWord(
         target_word='helloworld',
         pop_size=1000,
         mutation_rate=0.1,
         max_iter=500
     )
-
+    '''
+    problem = Knapsack01(
+        pop_size = 5,
+        mutation_rate = 0.1,
+        max_iter = 20
+    )
     population, data = problem.run()
 
 

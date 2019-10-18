@@ -11,7 +11,19 @@ class Problem:
     def termination_condition(self, individual_fitness):
         raise NotImplementedError
 
-    def mutate(self, gen):
+    def mutate(self, gene):
+        raise NotImplementedError
+
+    def individual_viability_condition(self, individual):
+        raise NotImplementedError
+
+    def viable_mutation(self, individual, index):
+        raise NotImplementedError
+
+    def viable_crossover(self, parent_1, parent_2):
+        raise NotImplementedError
+
+    def viable_individual_factory(self):
         raise NotImplementedError
 
     def print_results(self, population, data):
@@ -24,8 +36,8 @@ class Problem:
         print("\nFinal best individual: ", end="")
 
         final_best_individual = data["historic_best_individual"][-1]
-        for gen in final_best_individual:
-            print(gen, end="")
+        for gene in final_best_individual:
+            print(gene, end="")
         print("\n", end="")
 
     def run(self):

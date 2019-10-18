@@ -18,8 +18,8 @@ class BitSequence(Problem):
     def fitness_function(self, individual):
         result = 0
         exp = 1
-        for gen in individual[::-1]:
-            result += int(gen) * exp
+        for gene in individual[::-1]:
+            result += int(gene) * exp
             exp *= 2
 
         return -abs(self.target - result)
@@ -35,8 +35,8 @@ class BitSequence(Problem):
     def termination_condition(self, individual_fitness):
         return individual_fitness == 0
 
-    def mutate(self, gen):
-        if gen == '0':
+    def mutate(self, gene):
+        if gene == '0':
             return '1'
         return '0'
 

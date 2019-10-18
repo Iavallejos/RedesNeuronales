@@ -12,6 +12,11 @@ class GeneticAlgorithm:
         mutate,
         termination_condition,
         max_iter,
+        individual_viability_check=False,
+        individual_viability_condition=None,
+        viable_mutation=None,
+        viable_crossover=None,
+        viable_individual_factory=None,
     ):
         self.__pop_size = pop_size
         self.__mutation_rate = mutation_rate
@@ -21,10 +26,30 @@ class GeneticAlgorithm:
         self.__termination_condition = termination_condition
         self.__max_iter = max_iter
         self.__mutate = mutate
+        self.__individual_viability_check = individual_viability_check
+        self.__viable_individual_factory = viable_individual_factory
 
-        self.__population = [
-            self.__individual_factory() for _ in range(self.__pop_size)
-        ]
+        if individual_viability_check:
+            if individual_viability_condition is None:
+                raise NotImplementedError("individual_viability_condition")
+            if viable_mutation is None:
+                raise NotImplementedError("viable_mutation")
+            if viable_crossover is None:
+                raise NotImplementedError("viable_crossover")
+            if viable_individual_factory is None:
+                raise NotImplementedError("viable_individual_factory")
+
+        self.__individual_viability_condition = individual_viability_condition
+        self.__viable_mutation = viable_mutation
+        self.__viable_crossover = viable_crossover
+
+        if individual_viability_check:
+            self.__population = [self.__viable_individual_factory()
+                                 for _ in range(self.__pop_size)]
+        else:
+            self.__population = [self.__individual_factory()
+                                 for _ in range(self.__pop_size)]
+
         self.__population_fitness = []
 
     def getPopulation(self):
@@ -70,33 +95,32 @@ class GeneticAlgorithm:
             parent_1 = self.__population[max_1]
             parent_2 = self.__population[max_2]
 
-        gen_breakpoint_index = np.random.randint(0, len(parent_1))
+        if self.__individual_viability_check:
+            child = self.__viable_crossover(parent_1, parent_2)
+        else:
+            gen_breakpoint_index = np.random.randint(1, len(parent_1)-1)
 
-        child_1 = parent_1[:gen_breakpoint_index] + \
-            parent_2[gen_breakpoint_index:]
-        child_2 = parent_2[:gen_breakpoint_index] + \
-            parent_1[gen_breakpoint_index:]
+            if np.random.random() < 0.5:
+                child = parent_1[:gen_breakpoint_index] + \
+                    parent_2[gen_breakpoint_index:]
+            else:
+                child = parent_2[:gen_breakpoint_index] + \
+                    parent_1[gen_breakpoint_index:]
 
         # mutation
-        for i in range(len(child_1)):
+        for i in range(len(child)):
             if np.random.random() < self.__mutation_rate:
-                child_1[i] = self.__mutate(child_1[i])
-            if np.random.random() < self.__mutation_rate:
-                child_2[i] = self.__mutate(child_2[i])
+                if self.__individual_viability_check:
+                    child[i] = self.__viable_mutation(child, i)
+                else:
+                    child[i] = self.__mutate(child[i])
 
-        return (child_1, child_2)
+        return child
 
     def __reproduce(self):
         total_fitness = np.sum(self.__population_fitness)
-        new_population_siblings = [
-            self.__produce_offspring(total_fitness)
-            for _ in range((int)(self.__pop_size / 2))
-        ]
-        new_population = []
-        for sibling_1, sibling_2 in new_population_siblings:
-            new_population.append(sibling_1)
-            new_population.append(sibling_2)
-
+        new_population = [self.__produce_offspring(
+            total_fitness) for _ in range(self.__pop_size)]
         self.__population = new_population
 
     def simulate(self):
@@ -110,9 +134,11 @@ class GeneticAlgorithm:
 
             actual_best_individual_fitness = np.max(self.__population_fitness)
             actual_worst_individual_fitness = np.min(self.__population_fitness)
-            actual_average_individual_fitness = np.average(self.__population_fitness)
-            actual_best_individual =  self.__population[np.argmax(self.__population_fitness)]
-            
+            actual_average_individual_fitness = np.average(
+                self.__population_fitness)
+            actual_best_individual = self.__population[np.argmax(
+                self.__population_fitness)]
+
             print("iteration {}:".format(i))
             print("\tBest Individual fitness:    {}".format(
                 actual_best_individual_fitness))
@@ -121,8 +147,8 @@ class GeneticAlgorithm:
             print("\tAverage Individual fitness: {}".format(
                 actual_average_individual_fitness))
             print("\tActual Best Individual: ", end="")
-            for gen in actual_best_individual:
-                print(gen, end="")
+            for gene in actual_best_individual:
+                print(gene, end="")
             print("\n", end="")
 
             best_individual_data.append(actual_best_individual_fitness)
