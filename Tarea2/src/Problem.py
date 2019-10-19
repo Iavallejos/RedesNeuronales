@@ -1,4 +1,5 @@
 class Problem:
+    """Class to create problems that uses GeneticAlgorithm"""
     def fitness_function(self, individual):
         raise NotImplementedError
 
@@ -27,6 +28,7 @@ class Problem:
         raise NotImplementedError
 
     def print_results(self, population, data):
+        """Prints the final results of the simulation"""
         print("Best Individuals fitness:   ", end="")
         print(data["best_individual_data"])
         print("Worst Individuals fitness:  ", end="")

@@ -2,6 +2,8 @@ import numpy as np
 
 
 class GeneticAlgorithm:
+    """Provides a GeneticAlgorithm framework to solve problems"""
+
     def __init__(
         self,
         pop_size,
@@ -18,6 +20,37 @@ class GeneticAlgorithm:
         viable_crossover=None,
         viable_individual_factory=None,
     ):
+        """ Creates a new GeneticAlgorithm
+
+        Parameters
+        ----------
+        pop_size : positive int
+            The number of existing individuals at any given time 
+        mutation_rate : float - from 0.0 to 1.0
+            The probability of any gene in an individual to spontaneously change into another
+        fitness_function : function
+            Takes an individual(list) as an argument - returns the fitness of the individual for the given problem
+        individual_factory : function
+            Returns a new individual(list) for the given problem using gene_factory
+        gene_factory : function
+            Returns a gene for the given problem
+        mutate : function
+            Takes a gene and returns a new diferent gene for the given problem
+        termination_condition : function
+            The condition to finalize the simulation. Takes a individual and returns True if the individual satisfies the termination function otherwise returns False
+        max_iter : positive int
+            The maximum number of generations to occur in the simulation
+        individual_viability_check : boolean
+            If the problem requires viability check for the individuals. If true, the next 4 functions are required
+        individual_viability_condition : function
+            The condition for an individual to be viable or not - returns True or False
+        viable_mutation : function
+            The same as mutate, but it takes the individual and the index of the gene - if the mutation is valid returns a new gene otherwise returns the same gene
+        viable_crossover : function
+            Takes 2 individuals and returns a valid offspring using them
+        viable_individual_factory : function
+            Same as individual_factory, but it returns a new valid individual
+        """
         self.__pop_size = pop_size
         self.__mutation_rate = mutation_rate
         self.__fitness_function = fitness_function
@@ -53,14 +86,25 @@ class GeneticAlgorithm:
         self.__population_fitness = []
 
     def getPopulation(self):
+        """Returns the current population"""
         return self.__population
 
     def __evaluate(self):
+        """Evaluates all the individuals using the fitness function"""
         self.__population_fitness = [
             self.__fitness_function(individual) for individual in self.__population
         ]
 
     def __produce_offspring(self, total_fitness, mode=0):
+        """Produces a new individual
+        Parameters
+        ----------
+
+        total_fitness : int
+            The total fitness of the current generation
+        mode : int - 0 or 1
+            The method to obtain the parents. 0 for Roulette and 1 for Tournament
+        """
         if mode == 0 and self.__population_fitness[0] >= 0:
             # Roulette
             parent_1_fitness, parent_2_fitness = np.random.randint(
@@ -118,12 +162,30 @@ class GeneticAlgorithm:
         return child
 
     def __reproduce(self):
+        """Creates a new generation of individuals"""
         total_fitness = np.sum(self.__population_fitness)
         new_population = [self.__produce_offspring(
             total_fitness) for _ in range(self.__pop_size)]
         self.__population = new_population
 
     def simulate(self):
+        """Runs the simulation to obtain the best posible individual for the problem
+        
+
+        It also prints the metrics of every generation.
+
+        Returns
+        -------
+        A dictionary with 4 keys:
+            "best_individual_data" : list
+                A list with the fitness of the best individual of every generation
+            "worst_individual_data" : list
+                A list with the fitness of the worst individual of every generation
+            "generation_average_data" : list
+                A list with the average fitness of every generation
+            "historic_best_individual" : list
+                A list with the best individual of every generation
+        """
         best_individual_data = []
         worst_individual_data = []
         generation_average_data = []
@@ -139,7 +201,7 @@ class GeneticAlgorithm:
             actual_best_individual = self.__population[np.argmax(
                 self.__population_fitness)]
 
-            print("iteration {}:".format(i))
+            print("Generation {}:".format(i))
             print("\tBest Individual fitness:    {}".format(
                 actual_best_individual_fitness))
             print("\tWorst Individual fitness:   {}".format(
