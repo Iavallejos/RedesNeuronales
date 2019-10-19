@@ -67,7 +67,15 @@ class BitSequence(Problem):
             return '1'
         return '0'
 
-    def run(self):
+    def set_pop_size(self, pop_size):
+        """Sets new pop_size"""
+        self.pop_size = pop_size
+
+    def set_mutation_rate(self, mutation_rate):
+        """Sets new mutation_rate"""
+        self.mutation_rate = mutation_rate
+
+    def run(self, silent=False):
         """Runs the simulation and prints the results"""
         simulation = GeneticAlgorithm(
             pop_size=self.pop_size,
@@ -79,7 +87,8 @@ class BitSequence(Problem):
             termination_condition=self.termination_condition,
             max_iter=self.max_iter,
         )
-        data = simulation.simulate()
+        data = simulation.simulate(silent)
         final_population = simulation.getPopulation()
-        self.print_results(final_population, data)
+        if not silent:
+            self.print_results(final_population, data)
         return (final_population, data)

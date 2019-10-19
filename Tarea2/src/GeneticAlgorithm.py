@@ -168,11 +168,11 @@ class GeneticAlgorithm:
             total_fitness) for _ in range(self.__pop_size)]
         self.__population = new_population
 
-    def simulate(self):
+    def simulate(self, silent):
         """Runs the simulation to obtain the best posible individual for the problem
         
 
-        It also prints the metrics of every generation.
+        if silent is False, it also prints the metrics of every generation.
 
         Returns
         -------
@@ -190,8 +190,9 @@ class GeneticAlgorithm:
         worst_individual_data = []
         generation_average_data = []
         historic_best_individual = []
-        print("{:-^50}".format("START"))
-        for i in range(self.__max_iter + 1):
+        if not silent:
+            print("{:-^50}".format("START"))
+        for i in range(1, self.__max_iter+1):
             self.__evaluate()
 
             actual_best_individual_fitness = np.max(self.__population_fitness)
@@ -201,17 +202,18 @@ class GeneticAlgorithm:
             actual_best_individual = self.__population[np.argmax(
                 self.__population_fitness)]
 
-            print("Generation {}:".format(i))
-            print("\tBest Individual fitness:    {}".format(
-                actual_best_individual_fitness))
-            print("\tWorst Individual fitness:   {}".format(
-                actual_worst_individual_fitness))
-            print("\tAverage Individual fitness: {}".format(
-                actual_average_individual_fitness))
-            print("\tActual Best Individual: ", end="")
-            for gene in actual_best_individual:
-                print(gene, end="")
-            print("\n", end="")
+            if not silent:
+                print("Generation {}:".format(i))
+                print("\tBest Individual fitness:    {}".format(
+                    actual_best_individual_fitness))
+                print("\tWorst Individual fitness:   {}".format(
+                    actual_worst_individual_fitness))
+                print("\tAverage Individual fitness: {}".format(
+                    actual_average_individual_fitness))
+                print("\tActual Best Individual: ", end="")
+                for gene in actual_best_individual:
+                    print(gene, end="")
+                print("\n", end="")
 
             best_individual_data.append(actual_best_individual_fitness)
             worst_individual_data.append(actual_worst_individual_fitness)
@@ -224,8 +226,8 @@ class GeneticAlgorithm:
                 break
 
             self.__reproduce()
-
-        print("{:-^50}".format("END"))
+        if not silent:
+            print("{:-^50}".format("END"))
         return {
             "best_individual_data": best_individual_data,
             "worst_individual_data": worst_individual_data,

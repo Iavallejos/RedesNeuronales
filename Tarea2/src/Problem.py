@@ -1,5 +1,6 @@
 class Problem:
     """Class to create problems that uses GeneticAlgorithm"""
+
     def fitness_function(self, individual):
         raise NotImplementedError
 
@@ -42,5 +43,5 @@ class Problem:
             print(gene, end="")
         print("\n", end="")
 
-    def run(self):
+    def run(self, silent=False):
         raise NotImplementedError

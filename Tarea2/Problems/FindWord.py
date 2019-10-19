@@ -71,7 +71,7 @@ class FindWord(Problem):
 
         return new_gen
 
-    def run(self):
+    def run(self, silent=False):
         """Runs the simulation and prints the results"""
         simulation = GeneticAlgorithm(
             pop_size=self.pop_size,
@@ -83,7 +83,8 @@ class FindWord(Problem):
             termination_condition=self.termination_condition,
             max_iter=self.max_iter,
         )
-        data = simulation.simulate()
+        data = simulation.simulate(silent)
         final_population = simulation.getPopulation()
-        self.print_results(final_population, data)
+        if not silent:
+            self.print_results(final_population, data)
         return (final_population, data)
