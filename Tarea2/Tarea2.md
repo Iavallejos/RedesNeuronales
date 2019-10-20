@@ -1,7 +1,6 @@
 # Tarea 2
 ## Tabla de contenidos
 
-- [Tabla de contenidos](#tabla-de-contenidos)
 - [Requisitos](#requisitos)
 - [Instrucciones](#instrucciones)
 - [Problema elegido](#problema-elegido)
