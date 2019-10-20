@@ -1,27 +1,26 @@
 # Tarea 2
 ## Tabla de contenidos
 
-- [Tarea 2](#tarea-2)
-  - [Tabla de contenidos](#tabla-de-contenidos)
-  - [Requisitos](#requisitos)
-  - [Instrucciones](#instrucciones)
-  - [Problema elegido](#problema-elegido)
-    - [Individuo](#individuo)
-    - [Función de *fitness*](#funci%c3%b3n-de-fitness)
-    - [Consideraciones específicas del problema](#consideraciones-espec%c3%adficas-del-problema)
-  - [Análisis](#an%c3%a1lisis)
-    - [Evolución del *fitness*](#evoluci%c3%b3n-del-fitness)
-    - [Heatmap población v/s ratio de mutación](#heatmap-poblaci%c3%b3n-vs-ratio-de-mutaci%c3%b3n)
+- [Tabla de contenidos](#tabla-de-contenidos)
+- [Requisitos](#requisitos)
+- [Instrucciones](#instrucciones)
+- [Problema elegido](#problema-elegido)
+  - [Individuo](#individuo)
+  - [Función de *fitness*](#funci%c3%b3n-de-fitness)
+  - [Consideraciones específicas del problema](#consideraciones-espec%c3%adficas-del-problema)
+- [Análisis](#an%c3%a1lisis)
+  - [Evolución del *fitness*](#evoluci%c3%b3n-del-fitness)
+  - [Heatmap población v/s ratio de mutación](#heatmap-poblaci%c3%b3n-vs-ratio-de-mutaci%c3%b3n)
 
 ## Requisitos
 La tarea consiste en implementar un algorítmo genético y aplicarlo a en la resolución de los problemas **_FindWord_** **_BitSequence_** que consisten en encontrar una palabra dada y un número dado en binario respectivamente, también se debe aplicar en la resolución de uno de estos problemas:
 
 - **Unbound-Knapsack**: Para una mochila que aguanta 15kg, encuentre la combinación de cajas que maximice el valor contenido en la mochila, pero que no se pase del peso máximo soportado. Las cajas permitidas son las siguientes:
-  1. Caja de peso 12 y valor 4.
-  2. Caja de peso 2 y valor 2.
-  3. Caja de peso 1 y valor 2.
-  4. Caja de peso 1 y valor 1.
-  5. Caja de peso 4 y valor 10.
+1. Caja de peso 12 y valor 4.
+2. Caja de peso 2 y valor 2.
+3. Caja de peso 1 y valor 2.
+4. Caja de peso 1 y valor 1.
+5. Caja de peso 4 y valor 10.
 
     Este problema se llama Unbound porque puede poner cuantas veces quiera cada caja, no hay límite (salvo por el límite de la mochila).
 - **0-1-Knapsack**: Igual que el problema de Unbound-Knapsack, mismo peso máximo soportado por la mochila, y mismas cajas. La restricción es que solo tiene 1 caja de cada una, por lo que solo puede utilizar cada una a lo más 1 vez, no pueden haber repeticiones. No esta obligado a utilizarlas todas.
